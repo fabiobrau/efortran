@@ -1,0 +1,62 @@
+MODULE HOB
+        implicit none
+        integer :: N=64, L=6
+        type :: INDTREE
+                integer :: INIZIO, FINE
+                type(INDTREE), pointer :: LT, RT
+        end type INDTREE
+        type :: MATTREE
+                double precision, allocatable :: A(:,:)
+                type(MATTREE), pointer ::  LT, RT
+        end type MATTREE
+        type :: LRMAT
+                double precision :: MAT(4,4)
+        end type LRMAT
+        type(LRMAT), pointer, dimension(N,N,L) :: EXAMPLE
+        contains
+                RECURSIVE SUBROUTINE  PTREE(T,N1,N2)
+                        implicit none
+                !costruisce l'albero binario dall'intervallo [1,...,N]
+                ! variabili di input
+                        type(INDTREE), pointer :: T
+                ! variabili locali
+                        integer :: N1, N2
+                        if ( N1==N2 ) then
+                                T % INIZIO = N1
+                                T % FINE = N2
+                                nullify(T % LT, T % RT)
+                        else
+                                T % INIZIO = N1
+                                T % FINE = N2
+                                allocate(T % LT, T % RT)
+                                call ptree(T % LT,N1,(N1+N2-1)/2)
+                                call ptree(T % RT,1+(N1+N2-1)/2,N2)
+                        end if
+                END SUBROUTINE PTREE
+                RECURSIVE SUBROUTINE PMZIP(AZIP,A)
+                ! variabili input
+                        implicit none
+                        type(MATTREE), pointer, intent(out) :: AZIP
+                        double precision, intent(in) :: A
+                ! variabili locali
+                END SUBROUTINE PMZIP
+!                SUBROUTINE HREAD(A,AOUT)
+!                        implicit none
+!                        type(LRMAT), pointer, allocatable, dimension(:,:,:) :: A
+!                END SUBROUTINE
+
+END MODULE
+PROGRAM TESTINSERT
+        use HOB
+        integer :: N=64
+        double precision, allocatable, dimension(:,:) :: A
+        type(INDTREE), pointer :: T,TAUX
+        integer :: N1, N2
+        allocate(A(N,N))
+        N1=1
+        N2=8
+        allocate(T)
+        call ptree(T,N1,N2)
+
+        write(*,*) T % R % L % fine
+END PROGRAM
